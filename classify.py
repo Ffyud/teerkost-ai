@@ -31,7 +31,7 @@ categories = [
 ]
 
 train_examples = [
-    InputExample(texts=["Yoghurt griekse stijl honing", "zuivel"], label=1.0),
+    InputExample(texts=["Yoghurt griekse stijl", "zuivel"], label=1.0),
     InputExample(texts=["Meergranen bollen", "brood"], label=1.0),
     InputExample(texts=["Appels rood", "fruit"], label=1.0),
     InputExample(texts=["Yoghurt griekse stijl honing", "rijst en granen"], label=0.0),
@@ -39,6 +39,48 @@ train_examples = [
     InputExample(texts=["Appels rood", "vlees"], label=0.0),
     # Voeg meer voorbeelden toe
 ]
+
+bier_keywords = [
+    "brouwerij", "brewery", "bier", "bieren", "biermerken", "speciaalbier",
+    "pilsener", "pils", "Heineken", "Radler", "speciaalbieren", "Grolsch",
+    "desperados", "Amstel", "Bavaria", "Affligem", "Trappe", "Brand",
+    "birra", "moretti", "Dors", "Veltins", "Dommelsch", "Alfa",
+    "Gulpener", "Westmalle", "tripel", "cornet", "karmeliet", "skuumkoppe",
+    "corona", "bud", "perlenbacher", "hefeweizen", "pilseners",
+    "pilsners", "brouwers", "lagerbier", "kasteelbier",
+    "kordaat", "tequilabier", "finkbrau", "oettinger", "argus", "steenbrugge",
+    "schultenbräu", "grimbergen", "bierbrouwerij", "kompaan",
+    "schultenbraü", "palm", "lefort", "ale", "lowlander", "weizener",
+    "bockbier", "homeland", "gooische", "bockbieren", "tarwebier", "bokbier",
+    "Leffe", "Corona", "Warsteiner", "Jupiler", "Weizen", "hoegaarden", "bokbieren",
+    "witbieren", "witbier", "weizenbier", "weizenbieren", "lentebier",
+    "lentebieren", "zomerbier", "zomerbieren", "herfstbier", "herfstbieren", "winterbier",
+    "winterbieren", "leckere", "victoria", "budels", "feuillien", "hoppy", "8.6",
+    "fruitbieren", "weissbier", "benediktiner", "texels", "lagunitas", "oedipus",
+    "ipa", "Chouffe", "Jopen", "Afflichem", "Duvel", "peroni", "amigo", "brewdog",
+    "herfstbok", "miguel", "feeks", "heidebrouwerij", "lentebok", "jubileumbier",
+    "gageleer", "hertog jan", "gebrouwen door vrouwen", "de eeuwige jeugd", "6-pack 0.0%", "vom berg",
+    "666 blond", "brugse zot", "pinkus speciaal", "two chefs brewing", "de klok",
+    "brothers in law", "vet & lazy", "4-pack blond", "6-pack wit", "6-pack blond",
+    "st. bernardus", "st. pierre", "uiltje brewing", "naeckte brouwers", "van de streek"
+]
+
+bier_ignore = [
+    "stoofvlees", "runderhachee", "ijs", "ijssalon", "smeren", "boter", "kuipje",
+    "bessen", "aardappelen", "pindakaas", "knorr", "tickets", "prix", "limonade", "cola",
+    "jerry's", "lindeman's"
+]
+
+# Add positive examples for keywords
+for kw in bier_keywords:
+    # Make a simple text example with keyword plus some word for context
+    train_examples.append(InputExample(texts=[f"{kw} bier", "bier"], label=1.0))
+
+# Add negative examples for ignore words with the "bier" category label
+for ign in bier_ignore:
+    train_examples.append(InputExample(texts=[ign, "bier"], label=0.0))
+
+
 
 # Stap 3: DataLoader met kleine batch size
 train_dataloader = DataLoader(train_examples, shuffle=True, batch_size=8)
