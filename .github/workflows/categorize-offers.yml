@@ -14,6 +14,5 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          # or pip install the LLMEmbed package if available
-      - name: Run LLMEmbed classification script
-        run: python classify.py input_data.txt output_results.txt
+      - name: Run SentenceTransformers classification script
+        run: python classify.py offers.json offers-categorized.json

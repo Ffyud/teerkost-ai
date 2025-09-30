@@ -1,5 +1,3 @@
-torch>=2.0
-transformers>=4.30
-sentence-transformers>=2.2
-llmembed  # or path/to/llmembed if local
-numpy
+sentence-transformers>=2.2.0
+numpy>=1.24.0
+torch>=2.0.0

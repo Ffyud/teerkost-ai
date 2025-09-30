@@ -1,9 +1,9 @@
 import json
-from llmembed import LLMEmbed
 import numpy as np
+from sentence_transformers import SentenceTransformer
 
-# Initialize embedder
-embedder = LLMEmbed()
+# Initialize embedder model
+embedder = SentenceTransformer('all-MiniLM-L6-v2')
 
 # Define categories
 categories = [
@@ -31,14 +31,20 @@ categories = [
 ]
 
 # Precompute embeddings for categories
-category_embeddings = embedder.encode(categories)
+category_embeddings = embedder.encode(categories, convert_to_tensor=True)
 
 def categorize_text(text: str):
-    text_embedding = embedder.encode([text])[0]
-    similarities = np.dot(category_embeddings, text_embedding) / (
-        np.linalg.norm(category_embeddings, axis=1) * np.linalg.norm(text_embedding) + 1e-10
+    # Embed the input text
+    text_embedding = embedder.encode(text, convert_to_tensor=True)
+
+    # Compute cosine similarities
+    similarities = (category_embeddings @ text_embedding) / (
+        np.linalg.norm(category_embeddings.cpu(), axis=1) * np.linalg.norm(text_embedding.cpu()) + 1e-10
     )
-    return categories[np.argmax(similarities)]
+
+    # Find index of best matching category
+    best_idx = np.argmax(similarities.cpu().numpy())
+    return categories[best_idx]
 
 def classify_offers(input_path: str, output_path: str):
     with open(input_path, 'r', encoding='utf-8') as f:
