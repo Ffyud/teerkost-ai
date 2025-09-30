@@ -14,23 +14,25 @@ def load_training_examples(json_path):
     with open(json_path, 'r', encoding='utf-8') as f:
         categories_data = json.load(f)
 
+    # Collect all keywords globally
+    all_keywords = set()
+    for cat in categories_data:
+        all_keywords.update([kw.strip() for kw in cat.get('keywords', [])])
+
     for cat in categories_data:
         cat_name = cat['name']
-        keywords = cat.get('keywords', [])
-        ignore_words = cat.get('ignore', [])
+        cat_keywords = set([kw.strip() for kw in cat.get('keywords', [])])
 
-        # Add positive examples from keywords
-        for kw in keywords:
-            kw_clean = kw.strip()
-            if kw_clean:
-                # Add some context for embedding variety
-                train_examples.append(InputExample(texts=[f"{kw_clean} special", cat_name], label=1.0))
+        # Positive examples - category's own keywords
+        for kw in cat_keywords:
+            if kw:
+                train_examples.append(InputExample(texts=[f"{kw} special", cat_name], label=1.0))
 
-        # Add negative examples from ignore words
+        # Negative examples - all other keywords as ignore words
+        ignore_words = all_keywords - cat_keywords
         for ign in ignore_words:
-            ign_clean = ign.strip()
-            if ign_clean:
-                train_examples.append(InputExample(texts=[ign_clean, cat_name], label=0.0))
+            if ign:
+                train_examples.append(InputExample(texts=[ign, cat_name], label=0.0))
 
     return train_examples
 
