@@ -2,8 +2,7 @@ import json
 import numpy as np
 from sentence_transformers import SentenceTransformer
 
-# Initialize embedder model
-embedder = SentenceTransformer('all-MiniLM-L6-v2')
+model = SentenceTransformer('all-MiniLM-L6-v2')
 
 # Define categories
 categories = [
@@ -30,12 +29,36 @@ categories = [
     "rijst en granen"
 ]
 
+train_examples = [
+    InputExample(texts=["Yoghurt griekse stijl honing", "zuivel"], label=1.0),
+    InputExample(texts=["Meergranen bollen", "brood"], label=1.0),
+    InputExample(texts=["Appels rood", "fruit"], label=1.0),
+    InputExample(texts=["Yoghurt griekse stijl honing", "rijst en granen"], label=0.0),
+    InputExample(texts=["Meergranen bollen", "zuivel"], label=0.0),
+    InputExample(texts=["Appels rood", "vlees"], label=0.0),
+    # Voeg meer voorbeelden toe
+]
+
+# Stap 3: DataLoader met kleine batch size
+train_dataloader = DataLoader(train_examples, shuffle=True, batch_size=8)
+
+# Stap 4: Definieer de loss-functie voor fine-tuning
+train_loss = losses.CosineSimilarityLoss(model)
+
+# Stap 5: Fine-tune het model
+num_epochs = 4
+model.fit(
+    train_objectives=[(train_dataloader, train_loss)],
+    epochs=num_epochs,
+    warmup_steps=10,
+    output_path='./fine_tuned_all_MiniLM_L6_v2'
+)
 # Precompute embeddings for categories
-category_embeddings = embedder.encode(categories, convert_to_tensor=True)
+category_embeddings = model.encode(categories, convert_to_tensor=True)
 
 def categorize_text(text: str):
     # Embed the input text
-    text_embedding = embedder.encode(text, convert_to_tensor=True)
+    text_embedding = model.encode(text, convert_to_tensor=True)
 
     # Compute cosine similarities
     similarities = (category_embeddings @ text_embedding) / (
