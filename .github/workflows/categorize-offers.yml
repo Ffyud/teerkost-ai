@@ -17,7 +17,8 @@ jobs:
       - name: Run SentenceTransformers classification script
         run: python classify.py offers.json offers-categorized.json
       - name: Upload categorized offers artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: categorized-offers
           path: offers-categorized.json
+          
