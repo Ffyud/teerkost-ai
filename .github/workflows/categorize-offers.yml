@@ -1,4 +1,4 @@
-name: LLMEmbed Classification
+name: SentenceTransformers Classification
 
 on: [push]
 
@@ -16,3 +16,8 @@ jobs:
           pip install -r requirements.txt
       - name: Run SentenceTransformers classification script
         run: python classify.py offers.json offers-categorized.json
+      - name: Upload categorized offers artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: categorized-offers
+          path: offers-categorized.json
