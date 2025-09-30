@@ -5,30 +5,9 @@ from torch.utils.data import DataLoader
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
-# Define categories
-categories = [
-    "brood",
-    "kaas",
-    "vlees",
-    "vis",
-    "groente",
-    "fruit",
-    "zuivel",
-    "beleg",
-    "ontbijt",
-    "dranken",
-    "bier",
-    "wijn",
-    "koffie",
-    "thee",
-    "snacks",
-    "zoetigheid",
-    "kant-en-klaar",
-    "sauzen",
-    "huishouden",
-    "verzorging",
-    "rijst en granen"
-]
+with open('categories.json', 'r', encoding='utf-8') as f:
+    categories_data = json.load(f)
+categories = [cat['name'] for cat in categories_data]
 
 def load_training_examples(json_path):
     train_examples = []
